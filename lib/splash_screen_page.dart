@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_phone_auth/route_generator.dart';
@@ -11,6 +12,7 @@ class SplashScreenPage extends StatefulWidget {
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -23,7 +25,14 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   Widget build(BuildContext context) {
     Timer(Duration(seconds: 3), () async {
-      Navigator.of(context).popAndPushNamed(Constant.LOGIN_PAGE);
+      User user = _auth.currentUser;
+      if(user == null) {
+        Navigator.of(context).popAndPushNamed(Constant.LOGIN_PAGE);
+        return;
+      }
+      Navigator.of(context).popAndPushNamed(Constant.HOME_PAGE);
+
+
     });
 
     var assetsImage = new AssetImage(

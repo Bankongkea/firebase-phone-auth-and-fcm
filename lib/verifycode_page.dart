@@ -17,6 +17,8 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
   final FocusNode _pinPutFocusNode = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _verificationId;
+  String _message;
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
@@ -34,6 +36,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('ផ្ទៀងផ្ទាត់លេខសម្ងាត់'),
@@ -61,7 +64,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                         fieldsCount: 6,
                         onSubmit: (String pin) {
                           _pinPutController.text = '';
-                          signIn(pin);
+                          _signInWithPhoneNumber(pin);
                           /*_showSnackBar(pin, context)*/
                         },
                         focusNode: _pinPutFocusNode,
@@ -107,7 +110,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     );
   }
 
-  _verifyPhoneNumber() async {
+  /*_verifyPhoneNumber() async {
     try {
       // dynamic parsed = await _plugin.parse(_phoneTextController.text, region: "KH");
       await _auth.verifyPhoneNumber(
@@ -133,14 +136,14 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
           // String smsCode = pin;
 
           // Create a PhoneAuthCredential with the code
-          /*PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          */ /*PhoneAuthCredential credential = PhoneAuthProvider.credential(
               verificationId: verificationId, smsCode: smsCode);
 
           // Sign the user in (or link) with the credential
           await _auth.signInWithCredential(credential);
 
           Navigator.of(context)
-              .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);*/
+              .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);*/ /*
           Navigator.of(context)
               .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
           print(verificationId);
@@ -155,8 +158,8 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
       print(e);
       // showSnackbar("Failed to Verify Phone Number: ${e}");
     }
-  }
-  Future<void> signIn(String otp) async {
+  }*/
+  /*Future<void> signIn(String otp) async {
 
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: _verificationId, smsCode: otp);
@@ -164,24 +167,113 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     // Sign the user in (or link) with the credential
     await _auth.signInWithCredential(credential);
 
+  }*/
+  void _verifyPhoneNumber() async {
+    PhoneVerificationCompleted verificationCompleted =
+        (PhoneAuthCredential phoneAuthCredential) async {
+      await _auth.signInWithCredential(phoneAuthCredential);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
+      _showSnackBar(
+          "Phone number automatically verified and user signed in: ${phoneAuthCredential}",
+          context);
+    };
+
+    PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException authException) {
+      // setState(() {
+      //   _message =
+      //       'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
+      // });
+    };
+
+    PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
+      _showSnackBar(
+          'Please check your phone for the verification code.', context);
+      _verificationId = verificationId;
+    };
+
+    PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      _verificationId = verificationId;
+    };
+
+    try {
+      await _auth.verifyPhoneNumber(
+          phoneNumber: widget._phoneNumberResult['e164'],
+          timeout: const Duration(seconds: 5),
+          verificationCompleted: verificationCompleted,
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    } catch (e) {
+      _showSnackBar("Failed to Verify Phone Number: ${e}", context);
+    }
   }
 
-/*void _showSnackBar(String pin, BuildContext context) {
-    final snackBar = SnackBar(
-      duration: const Duration(seconds: 3),
-      content: Container(
-        height: 80.0,
-        child: Center(
-          child: Text(
-            'Pin Submitted. Value: $pin',
-            style: const TextStyle(fontSize: 25.0),
-          ),
-        ),
-      ),
-      backgroundColor: Colors.deepPurpleAccent,
-    );
-    Scaffold.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
-  }*/
+  void _signInWithPhoneNumber(String smsCode) async {
+    try {
+      final AuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: smsCode,
+      );
+      final User user = (await _auth.signInWithCredential(credential)).user;
+
+      _showSnackBar("Successfully signed in UID: ${user.uid}", context);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
+
+    } catch (e) {
+      print(e);
+      _showSnackBar("Failed to sign in $e", context);
+
+    }
+  }
+}
+
+// void _showSnackBar(String pin, BuildContext context) {
+//   final snackBar = SnackBar(
+//     duration: const Duration(seconds: 3),
+//     content: Container(
+//       height: 80.0,
+//       child: Center(
+//         child: Text(
+//           'Pin Submitted. Value: $pin',
+//           style: const TextStyle(fontSize: 25.0),
+//         ),
+//       ),
+//     ),
+//     backgroundColor: Colors.deepPurpleAccent,
+//   );
+//   Scaffold.of(context)
+//     ..hideCurrentSnackBar()
+//     ..showSnackBar(snackBar);
+// }
+
+_showSnackBar(String message, BuildContext context) {
+  // set up the button
+  Widget okButton = FlatButton(
+    child: Text('ok'),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text('alert'),
+    content: Text(message),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
