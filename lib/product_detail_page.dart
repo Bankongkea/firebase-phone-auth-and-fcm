@@ -225,7 +225,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           child: InkWell(
                             onTap: () {
                               Navigator.of(context)
-                                  .pushNamed(Constant.REVIEW_USER_INFO);
+                                  .pushNamed(Constant.REVIEW_USER_INFO_PAGE);
                             },
                             borderRadius: BorderRadius.circular(10),
                             child: Container(

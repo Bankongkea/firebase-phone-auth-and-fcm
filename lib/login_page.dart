@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Image.asset('assets/image/test.png', height: 250),
-                  outlineTextField(_phoneTextController,
+                  outlineTextField('បញ្ចូលលេខទូរស័ព្ទរបស់អ្នក', _phoneTextController,
                       keyboardType: TextInputType.phone),
                   SizedBox(height: 20),
                   buttonRound(
