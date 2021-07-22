@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_phone_auth/route_generator.dart';
+import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 
 class SplashScreenPage extends StatefulWidget {
   @override

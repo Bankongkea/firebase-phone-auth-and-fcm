@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_phone_auth/route_generator.dart';
+import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class VerifyCodePage extends StatefulWidget {

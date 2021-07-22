@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_phone_auth/model/product.dart';
+import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 
 class ProductList extends StatelessWidget {
   @override
@@ -27,7 +28,7 @@ class ProductList extends StatelessWidget {
           children: snapshot.data.docs.map((DocumentSnapshot document) {
             Map<String, dynamic> data = document.data();
             Product product = Product.fromJson(data);
-            return getStructuredGridCell(product);
+            return getStructuredGridCell(product, context);
           }).toList(),
         );
       },
@@ -35,7 +36,7 @@ class ProductList extends StatelessWidget {
   }
 }
 
-Widget getStructuredGridCell(Product product) {
+Widget getStructuredGridCell(Product product, BuildContext context) {
   return Stack(
     children: [
       Container(
@@ -55,22 +56,26 @@ Widget getStructuredGridCell(Product product) {
                   children: <Widget>[
                     Text(
                       product.name,
-                      style:
-                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 2),
-                    Text(product.description,
-                        maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      product.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Text('ចំនួននៅក្នុងស្ដុក: '),
-                        Text(product.qty)
-                      ],
+                    Text(
+                      'ចំនួននៅក្នុងស្ដុក:  ${product.qty}${product.unit}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -84,16 +89,28 @@ Widget getStructuredGridCell(Product product) {
             color: Colors.redAccent,
             borderRadius: BorderRadius.circular(4.0),
             border:
-            Border.all(width: 0.5, color: Colors.black.withOpacity(0.2)),
+                Border.all(width: 0.5, color: Colors.black.withOpacity(0.2)),
           ),
           child: Text(
-            product.price,
+            product.price + product.currency,
             style: TextStyle(
               color: Colors.white,
             ),
           ),
         ),
       ),
+      Positioned.fill(
+          child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pushNamed(Constant.PRODUCT_DETAIL_PAGE,
+                    arguments: product);
+              },
+            )),
+      ))
     ],
   );
 }

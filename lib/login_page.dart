@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_firebase_phone_auth/component/button_component.dart';
 import 'package:flutter_firebase_phone_auth/component/text_component.dart';
-import 'package:flutter_firebase_phone_auth/route_generator.dart';
+import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 
 import 'common/utils.dart';
 

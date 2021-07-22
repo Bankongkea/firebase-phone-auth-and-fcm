@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_phone_auth/route_generator.dart';
+import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 import 'package:flutter_firebase_phone_auth/splash_screen_page.dart';
 
 Future<void> main() async {
