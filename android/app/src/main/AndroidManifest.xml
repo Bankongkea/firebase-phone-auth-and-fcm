@@ -8,8 +8,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
 
-        android:label="flutter_firebase_phone_auth"
-        android:icon="@mipmap/ic_launcher">
+        android:label="ផ្ទះចំការ"
+        android:icon="@mipmap/ic_app">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

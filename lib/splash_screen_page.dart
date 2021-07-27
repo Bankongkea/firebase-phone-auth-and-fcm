@@ -36,10 +36,9 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     });
 
     var assetsImage = new AssetImage(
-        'assets/image/test.png'); //<- Creates an object that fetches an image.
+        'assets/image/splash_image.png'); //<- Creates an object that fetches an image.
     var image = new Image(
-        image: assetsImage,
-        height: 300); //<- Creates a widget that displays an image.
+        image: assetsImage); //<- Creates a widget that displays an image.
 
     return MaterialApp(
       home: Scaffold(

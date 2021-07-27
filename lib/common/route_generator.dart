@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase_phone_auth/home_page.dart';
 import 'package:flutter_firebase_phone_auth/login_page.dart';
 import 'package:flutter_firebase_phone_auth/map_view_page.dart';
+import 'package:flutter_firebase_phone_auth/model/address.dart';
 import 'package:flutter_firebase_phone_auth/product_detail_page.dart';
 import 'package:flutter_firebase_phone_auth/review_user_info_page.dart';
+import 'package:flutter_firebase_phone_auth/thankyou_page.dart';
 import 'package:flutter_firebase_phone_auth/verifycode_page.dart';
 
 class RouteGenerator {
@@ -26,9 +28,12 @@ class RouteGenerator {
       case Constant.PRODUCT_DETAIL_PAGE:
         return MaterialPageRoute(builder: (_) => ProductDetailPage(args));
       case Constant.REVIEW_USER_INFO_PAGE:
-        return MaterialPageRoute(builder: (_) => ReviewUserInfoPage());
+        var params = args as List;
+        return MaterialPageRoute(builder: (_) => ReviewUserInfoPage(params[0], params[1]));
       case Constant.MAP_VIEW_PAGE:
-        return MaterialPageRoute(builder: (_) => MapViewPage());
+        return MaterialPageRoute<AddressObj>(builder: (_) => MapViewPage());
+      case Constant.THANK_YOU_PAGE:
+        return MaterialPageRoute<AddressObj>(builder: (_) => ThankYouPage());
 
       default:
         // If there is no such named route in the switch statement, e.g. /third
@@ -57,4 +62,5 @@ class Constant{
   static const String PRODUCT_DETAIL_PAGE = 'productDetailPage';
   static const String REVIEW_USER_INFO_PAGE = 'reviewUserInfoPage';
   static const String MAP_VIEW_PAGE = 'mapViewPage';
+  static const String THANK_YOU_PAGE = 'thankYouPage';
 }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_phone_auth/model/address.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:geocoder/model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-// import 'package:geocoder/geocoder.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 
@@ -21,7 +19,7 @@ class _MapViewPageState extends State<MapViewPage> {
   Location location = Location();
   double lat;
   double lng;
-
+  AddressObj addressObj = AddressObj();
   GoogleMapController _controller;
   LatLng _initialcameraposition = LatLng(11.5461703, 104.9138566);
 
@@ -29,6 +27,13 @@ class _MapViewPageState extends State<MapViewPage> {
   void initState() {
     super.initState();
     getLoc();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
   }
 
   void _onMapCreated(GoogleMapController _cntlr) {
@@ -46,8 +51,14 @@ class _MapViewPageState extends State<MapViewPage> {
           image: DecorationImage(
               image: AssetImage('assets/image/test.png'), fit: BoxFit.cover),
         ),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         child: SafeArea(
           child: Container(
             color: Colors.blueGrey.withOpacity(.8),
@@ -55,8 +66,14 @@ class _MapViewPageState extends State<MapViewPage> {
               child: Column(
                 children: [
                   Container(
-                    height: MediaQuery.of(context).size.height / 1.3,
-                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 1.3,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                     child: Stack(
                       children: [
                         GoogleMap(
@@ -66,11 +83,12 @@ class _MapViewPageState extends State<MapViewPage> {
                           onMapCreated: _onMapCreated,
                           myLocationEnabled: true,
                           onCameraIdle: () {
-                            _getAddress(lat, lng).then((value) => {
-                                  setState(() {
-                                    _address = " $value";
-                                  })
-                                });
+                            _getAddress(lat, lng).then((value) =>
+                            {
+                              setState(() {
+                                _address = " $value";
+                              })
+                            });
                           },
                           onCameraMove: (cameraPosition) {
                             setState(() {
@@ -114,7 +132,10 @@ class _MapViewPageState extends State<MapViewPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).pop();
+          addressObj.lat = lat;
+          addressObj.lng = lng;
+          addressObj.addressName = _address;
+          Navigator.of(context).pop(addressObj);
         },
         label: Text('រួចរាល់'),
         icon: Icon(FontAwesomeIcons.locationArrow),
@@ -175,7 +196,7 @@ class _MapViewPageState extends State<MapViewPage> {
   Future<String> _getAddress(double lat, double lang) async {
     final coordinates = new Coordinates(lat, lang);
     List<Address> add =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    await Geocoder.local.findAddressesFromCoordinates(coordinates);
     return add.first.addressLine;
   }
 }

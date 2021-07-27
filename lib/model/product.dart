@@ -6,8 +6,9 @@ class Product {
   String price;
   String unit;
   String currency;
+  String id;
 
-  Product({this.name, this.description, this.qty, this.image, this.price,this.unit,this.currency});
+  Product({this.name, this.description, this.qty, this.image, this.price,this.unit,this.currency,this.id});
 
   Product.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -17,6 +18,7 @@ class Product {
     price = json['price'];
     unit = json['unit'];
     currency = json['currency'];
+    id = json['id'];
   }
 
 }

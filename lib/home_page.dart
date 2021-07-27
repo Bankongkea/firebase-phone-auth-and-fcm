@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_firebase_phone_auth/component/home_product_list.dart';
 import 'package:flutter_firebase_phone_auth/model/product.dart';
+import 'package:flutter_firebase_phone_auth/order_page.dart';
+import 'package:flutter_firebase_phone_auth/profile_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,8 +22,8 @@ class _HomePageState extends State<HomePage> {
   }
   static List<Widget> _widgetOptions = <Widget>[
     ProductList(),
-    ProductList(),
-    ProductList(),
+    OrderPage(),
+    ProfilePage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -30,26 +32,26 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('ផ្ទះចំការ'),
       ),
-      body: ProductList(),//_widgetOptions.elementAt(_selectedIndex),
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.productHunt),
+            icon: Icon(FontAwesomeIcons.shoppingCart),
             label: 'ទំនិញ ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_emoticon),
-            label: 'Business',
+            icon: Icon(FontAwesomeIcons.idBadge),
+            label: 'ការបញ្ជាទិញ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.home),
-            label: 'School',
+            icon: Icon(FontAwesomeIcons.user),
+            label: 'ព័ត៍មានរបស់អ្នក',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        // selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
     );

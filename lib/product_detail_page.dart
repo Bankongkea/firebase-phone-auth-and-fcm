@@ -14,6 +14,8 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
+  int _qty = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +129,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        'តម្លៃសេវាដឹកជញ្ជូន ៨០០០រៀល',
+                        'តម្លៃសេវាដឹកជញ្ជូន 8000រៀល',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -136,19 +138,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        height: 49,
-                        width: 49,
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(228, 228, 228, 1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '-',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                      InkWell(
+                        onTap: () {
+                          if (_qty > 1) {
+                            setState(() {
+                              _qty--;
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: 49,
+                          width: 49,
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(228, 228, 228, 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '-',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),
@@ -158,7 +169,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         width: 100,
                         child: Center(
                           child: Text(
-                            '1',
+                            '$_qty',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -166,19 +177,27 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           ),
                         ),
                       ),
-                      Container(
-                        height: 49,
-                        width: 49,
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(243, 175, 45, 1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '+',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                      InkWell(
+                        onTap: () {
+                          if(_qty < int.parse( widget._product.qty))
+                          setState(() {
+                            _qty++;
+                          });
+                        },
+                        child: Container(
+                          height: 49,
+                          width: 49,
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(243, 175, 45, 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '+',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),
@@ -220,12 +239,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           ),
                         ),
                         Material(
-                          color: Color.fromRGBO(243, 175, 45, 1),
+                          color: Theme.of(context)
+                              .primaryColor /*Color.fromRGBO(243, 175, 45, 1)*/,
                           borderRadius: BorderRadius.circular(10),
                           child: InkWell(
                             onTap: () {
-                              Navigator.of(context)
-                                  .pushNamed(Constant.REVIEW_USER_INFO_PAGE);
+                              Navigator.of(context).pushNamed(
+                                  Constant.REVIEW_USER_INFO_PAGE,
+                                  arguments: [widget._product, _qty]);
                             },
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
@@ -237,7 +258,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               child: Text(
                                 'ទិញ',
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                    fontSize: 18, color: Colors.white),
                               ),
                             ),
                           ),

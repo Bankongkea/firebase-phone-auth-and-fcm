@@ -28,6 +28,7 @@ class ProductList extends StatelessWidget {
           children: snapshot.data.docs.map((DocumentSnapshot document) {
             Map<String, dynamic> data = document.data();
             Product product = Product.fromJson(data);
+            product.id = document.id;
             return getStructuredGridCell(product, context);
           }).toList(),
         );
