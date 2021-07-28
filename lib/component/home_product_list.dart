@@ -6,33 +6,38 @@ import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 class ProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('product').snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Something went wrong');
-        }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ផ្ទះចំការ'),
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('product').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return GridView.count(
+            padding: const EdgeInsets.all(8.0),
+            crossAxisCount: 2,
+            childAspectRatio: 1 / 1.5,
+            // gridDelegate:
+            //     SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            children: snapshot.data.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data = document.data();
+              Product product = Product.fromJson(data);
+              product.id = document.id;
+              return getStructuredGridCell(product, context);
+            }).toList(),
           );
-        }
-
-        return GridView.count(
-          padding: const EdgeInsets.all(8.0),
-          crossAxisCount: 2,
-          childAspectRatio: 1 / 1.5,
-          // gridDelegate:
-          //     SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          children: snapshot.data.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> data = document.data();
-            Product product = Product.fromJson(data);
-            product.id = document.id;
-            return getStructuredGridCell(product, context);
-          }).toList(),
-        );
-      },
+        },
+      ),
     );
   }
 }

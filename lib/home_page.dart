@@ -31,9 +31,6 @@ class _HomePageState extends State<HomePage> {
     query.get();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('ផ្ទះចំការ'),
-      ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
