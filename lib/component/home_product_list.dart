@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_phone_auth/model/product.dart';
@@ -53,8 +54,14 @@ Widget getStructuredGridCell(Product product, BuildContext context) {
             // mainAxisSize: MainAxisSize.max,
             // verticalDirection: VerticalDirection.down,
             children: <Widget>[
-              Image.network(product.image,
-                  height: 180, width: double.infinity, fit: BoxFit.cover),
+              Image(
+                height: 180,
+                width: double.infinity,
+                image: CachedNetworkImageProvider(product.image),
+                fit: BoxFit.cover,
+              ),
+             /* Image.network(product.image,
+                  height: 180, width: double.infinity, fit: BoxFit.cover),*/
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Column(

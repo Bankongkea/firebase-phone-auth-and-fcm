@@ -174,9 +174,6 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
       await _auth.signInWithCredential(phoneAuthCredential);
       Navigator.of(context)
           .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
-      _showSnackBar(
-          "Phone number automatically verified and user signed in: ${phoneAuthCredential}",
-          context);
     };
 
     PhoneVerificationFailed verificationFailed =
@@ -189,8 +186,6 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 
     PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
-      _showSnackBar(
-          'Please check your phone for the verification code.', context);
       _verificationId = verificationId;
     };
 
@@ -208,7 +203,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
           codeSent: codeSent,
           codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
     } catch (e) {
-      _showSnackBar("Failed to Verify Phone Number: ${e}", context);
+      _showDialog("Failed to Verify Phone Number", context);
     }
   }
 
@@ -219,14 +214,12 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
         smsCode: smsCode,
       );
       final User user = (await _auth.signInWithCredential(credential)).user;
-
-      _showSnackBar("Successfully signed in UID: ${user.uid}", context);
       Navigator.of(context)
           .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
 
     } catch (e) {
       print(e);
-      _showSnackBar("Failed to sign in $e", context);
+      _showDialog("Failed to sign in", context);
 
     }
   }
@@ -244,17 +237,17 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 //         ),
 //       ),
 //     ),
-//     backgroundColor: Colors.deepPurpleAccent,
+//     backgroundColor: Colors.`deepPurpleAccent`,
 //   );
 //   Scaffold.of(context)
 //     ..hideCurrentSnackBar()
 //     ..showSnackBar(snackBar);
 // }
 
-_showSnackBar(String message, BuildContext context) {
+_showDialog(String message, BuildContext context) {
   // set up the button
   Widget okButton = FlatButton(
-    child: Text('ok'),
+    child: Text('យល់'),
     onPressed: () {
       Navigator.of(context).pop();
     },
@@ -262,7 +255,7 @@ _showSnackBar(String message, BuildContext context) {
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text('alert'),
+    title: Text('ដំណឹង'),
     content: Text(message),
     actions: [
       okButton,

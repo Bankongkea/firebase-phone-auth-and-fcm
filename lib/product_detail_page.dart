@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,10 +25,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Container(
             height: MediaQuery.of(context).size.height * .6,
             width: double.infinity,
-            child: Image.network(
+            child:  Image(
+              image: CachedNetworkImageProvider(widget._product.image),
+              fit: BoxFit.cover,
+            ),/*Image.network(
               widget._product.image,
               fit: BoxFit.cover,
-            ),
+            ),*/
           ),
           Positioned(
             height: 42,
