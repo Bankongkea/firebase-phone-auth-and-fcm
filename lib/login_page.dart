@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 import 'package:flutter_firebase_phone_auth/component/button_component.dart';
 import 'package:flutter_firebase_phone_auth/component/text_component.dart';
-import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
 
 import 'common/utils.dart';
 
@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('ផ្ទះចំការ'),
       ),
       body: GestureDetector(
         onTap: () {
@@ -39,21 +39,27 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Image.asset('assets/image/test.png', height: 250),
                   SizedBox(height: 20),
-                  outlineTextField('បញ្ចូលលេខទូរស័ព្ទរបស់អ្នក', _phoneTextController,
+                  outlineTextField(
+                      'បញ្ចូលលេខទូរស័ព្ទរបស់អ្នក', _phoneTextController,
                       keyboardType: TextInputType.phone),
                   SizedBox(height: 20),
                   buttonRound(
                       onPressed: () {
+                        if (_phoneTextController.text.isEmpty) {
+                          showMessage('សូមបញ្ចូលលេខទូរស័ព្ទរបស់អ្នក', context);
+                          return;
+                        }
                         validatePhone(_phoneTextController.text).then((value) {
                           if (value != null) {
                             Navigator.of(context).pushNamed(
                                 Constant.VERIFY_CODE_PAGE,
                                 arguments: value);
                           }
+                          showMessage('លេខទូរស័ព្ទមិនត្រឹមត្រូវ', context);
                         });
                       },
                       context: context,
-                      buttonName: 'Login'),
+                      buttonName: 'ចូលប្រើប្រាស់'),
                 ],
               ),
             ),
