@@ -4,15 +4,16 @@ import 'package:flutter_firebase_phone_auth/component/text_component.dart';
 
 class DeliveryInfo extends StatefulWidget {
   final Function onChange;
+  final userName;
 
-  DeliveryInfo(this.onChange);
+  DeliveryInfo(this.userName, this.onChange);
 
   @override
   _DeliveryInfoState createState() => _DeliveryInfoState();
 }
 
 class _DeliveryInfoState extends State<DeliveryInfo> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController _nameController;
 
   _onApplyChange() async {
@@ -23,7 +24,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
   @override
   void initState() {
     _nameController =
-        TextEditingController(text: _auth.currentUser.displayName);
+        TextEditingController(text: widget.userName);
     super.initState();
   }
 

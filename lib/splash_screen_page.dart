@@ -26,13 +26,11 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   Widget build(BuildContext context) {
     Timer(Duration(seconds: 3), () async {
       User user = _auth.currentUser;
-      if(user == null) {
+      if (user == null) {
         Navigator.of(context).popAndPushNamed(Constant.LOGIN_PAGE);
         return;
       }
       Navigator.of(context).popAndPushNamed(Constant.HOME_PAGE);
-
-
     });
 
     var assetsImage = new AssetImage(

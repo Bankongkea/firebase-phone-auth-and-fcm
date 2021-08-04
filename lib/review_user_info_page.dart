@@ -24,6 +24,7 @@ class ReviewUserInfoPage extends StatefulWidget {
 
 class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  CollectionReference _users = FirebaseFirestore.instance.collection('user');
   bool _isLoading = false;
   TextEditingController _addressNoteController;
   AddressObj _address = AddressObj();
@@ -34,13 +35,12 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
   void initState() {
     _addressNoteController = TextEditingController();
     SharedPreferences.getInstance().then((value) {
-      setState(() {
-        _address.lat = value.get('lat');
-        _address.lng = value.get('lng');
-        _address.addressName = value.get('addressName');
-        _address.addressNote = value.get('addressNote');
-        _addressNoteController.text = _address.addressNote;
-      });
+      _address.lat = value.get('lat');
+      _address.lng = value.get('lng');
+      _address.addressName = value.get('addressName');
+      _address.addressNote = value.get('addressNote');
+      _addressNoteController.text = _address.addressNote;
+      setState(() {});
     });
     super.initState();
   }
@@ -57,38 +57,63 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
       appBar: AppBar(
         title: Text('ពិនិត្យព័ត៍មានរបស់អ្នក'),
       ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Stack(
-          children: [
-            ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildCardProduct(),
-                _buildCardContact(),
-                _buildCardAddress(),
-                SizedBox(
-                  height: 20,
-                ),
-                _buildNextButton()
-              ],
-            ),
-            _isLoading == true
-                ? Center(child: CircularProgressIndicator())
-                : SizedBox(),
-            /*Positioned(
+      body: FutureBuilder(
+        future: _users.doc(_auth.currentUser.phoneNumber).get(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Something Error'),
+            );
+          }
+          if (snapshot.hasData && !snapshot.data.exists) {
+            return Center(
+              child: Text("Document does not exist"),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return body(snapshot);
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget body(snapshot) {
+    Map<String, dynamic> data = snapshot.data.data() as Map<String, dynamic>;
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _buildCardProduct(),
+              _buildCardContact(data),
+              _buildCardAddress(),
+              SizedBox(
+                height: 20,
+              ),
+              _buildNextButton()
+            ],
+          ),
+          _isLoading == true
+              ? Center(child: CircularProgressIndicator())
+              : SizedBox(),
+          /*Positioned(
               bottom: 16,
               left: 0,
               right: 0,
               child: _buildNextButton(),
             ),*/
-          ],
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildCardContact() {
+  Widget _buildCardContact(data) {
     return Container(
       width: double.infinity,
       child: Card(
@@ -117,7 +142,7 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor)),
                         onPressed: () {
-                          _showContactInfo();
+                          _showContactInfo(data['user_name']);
                         },
                       ),
                     ),
@@ -132,11 +157,7 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
                       children: <Widget>[
                         Text('ឈ្មោះ'),
                         SizedBox(height: 4),
-                        Text(
-                            (_auth.currentUser.displayName == null ||
-                                    _auth.currentUser.displayName == '')
-                                ? 'មិនមានឈ្មោះ'
-                                : _auth.currentUser.displayName,
+                        Text(data['user_name'],
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -147,7 +168,7 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
                       children: <Widget>[
                         Text('លេខទូរស័ព្ទ'),
                         SizedBox(height: 4),
-                        Text(_auth.currentUser.phoneNumber,
+                        Text(data['phone_number'],
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -317,13 +338,13 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
     );
   }
 
-  _showContactInfo() {
+  _showContactInfo(userName) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return DeliveryInfo(_onChangeContact);
+        return DeliveryInfo(userName, _onChangeContact);
       },
     );
   }
@@ -332,8 +353,9 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
     setState(() {
       _isLoading = true;
     });
-    await _auth.currentUser.updateProfile(displayName: name);
-    await _auth.currentUser.reload();
+    await _users.doc(_auth.currentUser.phoneNumber).update({'user_name': name});
+    // await _auth.currentUser.updateProfile(displayName: name);
+    // await _auth.currentUser.reload();
     setState(() {
       _isLoading = false;
     });
@@ -370,7 +392,8 @@ class _ReviewUserInfoPageState extends State<ReviewUserInfoPage> {
       _showMessage('សូមកំណត់ទីតាំងរបស់អ្នកងាយស្រួលក្នុងការដឹកជញ្ជូន', context);
       return;
     }
-    if (_auth.currentUser.displayName == null ||_auth.currentUser.displayName == '') {
+    if (_auth.currentUser.displayName == null ||
+        _auth.currentUser.displayName == '') {
       _showMessage('សូមបញ្ចូលឈ្មោះរបស់អ្នកងាយស្រួលក្នុងការដឹកជញ្ជូន', context);
       return;
     }

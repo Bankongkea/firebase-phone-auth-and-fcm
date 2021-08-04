@@ -9,10 +9,12 @@ class OrderCell extends StatelessWidget {
     Key key,
     @required this.datas,
     this.onPressed,
+    this.elevation = 1.0
   }) : super(key: key);
 
   final Order datas;
   final VoidCallback onPressed;
+  final elevation;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class OrderCell extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 4, left: 4),
       child: Card(
+        elevation: elevation,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: .0, vertical: 8.0),
           child: FlatButton(

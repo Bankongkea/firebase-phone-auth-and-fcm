@@ -235,7 +235,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 style: TextStyle(fontSize: 16),
                               ),
                               Text(
-                                '25,000' + widget._product.currency,
+                                totalPrice(),
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -277,5 +277,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ],
       ),
     );
+  }
+
+  String totalPrice(){
+    return ((double.parse(widget._product.price) *_qty)+8000).toString() + widget._product.currency;
   }
 }

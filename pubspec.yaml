@@ -34,6 +34,7 @@ dependencies:
   firebase_auth: 0.18.3
   firebase_analytics: 6.0.1
   firebase_core: ^0.5.0+1
+#  firebase_remote_config: 0.1.0+3
   phone_number: ^0.6.2
   pinput: ^1.0.0
   cloud_firestore: 0.14.0

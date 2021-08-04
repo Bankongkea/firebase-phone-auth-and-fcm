@@ -3,6 +3,7 @@ import 'package:flutter_firebase_phone_auth/home_page.dart';
 import 'package:flutter_firebase_phone_auth/login_page.dart';
 import 'package:flutter_firebase_phone_auth/map_view_page.dart';
 import 'package:flutter_firebase_phone_auth/model/address.dart';
+import 'package:flutter_firebase_phone_auth/order_detail_page.dart';
 import 'package:flutter_firebase_phone_auth/product_detail_page.dart';
 import 'package:flutter_firebase_phone_auth/review_user_info_page.dart';
 import 'package:flutter_firebase_phone_auth/thankyou_page.dart';
@@ -33,7 +34,9 @@ class RouteGenerator {
       case Constant.MAP_VIEW_PAGE:
         return MaterialPageRoute<AddressObj>(builder: (_) => MapViewPage());
       case Constant.THANK_YOU_PAGE:
-        return MaterialPageRoute<AddressObj>(builder: (_) => ThankYouPage());
+        return MaterialPageRoute(builder: (_) => ThankYouPage());
+      case Constant.ORDER_DETAIL:
+        return MaterialPageRoute(builder: (_) => OrderDetailPage(order: args));
 
       default:
         // If there is no such named route in the switch statement, e.g. /third
@@ -63,4 +66,5 @@ class Constant{
   static const String REVIEW_USER_INFO_PAGE = 'reviewUserInfoPage';
   static const String MAP_VIEW_PAGE = 'mapViewPage';
   static const String THANK_YOU_PAGE = 'thankYouPage';
+  static const String ORDER_DETAIL = 'orderDetail';
 }

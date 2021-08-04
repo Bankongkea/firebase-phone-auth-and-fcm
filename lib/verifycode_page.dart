@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
@@ -17,8 +18,8 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
   final FocusNode _pinPutFocusNode = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _verificationId;
-  String _message;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+  CollectionReference users = FirebaseFirestore.instance.collection('user');
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
@@ -53,7 +54,8 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      'សូមចញ្ចូលលេខសម្ងាត់ដែលទទួលបានតាមលេខទូរស័ព្ទរបស់អ្នក ${widget._phoneNumberResult['national']}',
+                      'សូមចញ្ចូលលេខសម្ងាត់ដែលទទួលបានតាមលេខទូរស័ព្ទរបស់អ្នក ${widget
+                          ._phoneNumberResult['national']}',
                       style: TextStyle(fontSize: 20),
                     ),
                     Container(
@@ -81,25 +83,6 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                         ),
                       ),
                     ),
-                    /*const SizedBox(height: 30.0),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () => _pinPutFocusNode.requestFocus(),
-                          child: const Text('Focus'),
-                        ),
-                        FlatButton(
-                          onPressed: () => _pinPutFocusNode.unfocus(),
-                          child: const Text('Unfocus'),
-                        ),
-                        FlatButton(
-                          onPressed: () => _pinPutController.text = '',
-                          child: const Text('Clear All'),
-                        ),
-                      ],
-                    ),*/
                   ],
                 ),
               ),
@@ -110,68 +93,30 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     );
   }
 
-  /*_verifyPhoneNumber() async {
-    try {
-      // dynamic parsed = await _plugin.parse(_phoneTextController.text, region: "KH");
-      await _auth.verifyPhoneNumber(
-        phoneNumber: widget._phoneNumberResult['e164'],
-        timeout: const Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // ANDROID ONLY!
+  Future<void> addUser(String phoneNumber,) {
+    return users.doc(phoneNumber)
+        .set({
+      'phone_number': phoneNumber,
+      'user_name': 'គ្មានឈ្មោះ',
+      'order_number': 0,
+      'profile_url': ''
+    });
+  }
 
-          // Sign the user in (or link) with the auto-generated credential
-          await _auth.signInWithCredential(credential);
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          if (e.code == 'invalid-phone-number') {
-            print('The provided phone number is not valid.');
-          }
-
-          // Handle other errors
-        },
-        codeSent: (String verificationId, [int forceResendingToken]) async {
-          _verificationId = verificationId;
-          // String smsCode = pin;
-
-          // Create a PhoneAuthCredential with the code
-          */ /*PhoneAuthCredential credential = PhoneAuthProvider.credential(
-              verificationId: verificationId, smsCode: smsCode);
-
-          // Sign the user in (or link) with the credential
-          await _auth.signInWithCredential(credential);
-
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);*/ /*
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
-          print(verificationId);
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
-          // Auto-resolution timed out...
-          print(verificationId);
-        },
-      );
-    } catch (e) {
-      print(e);
-      // showSnackbar("Failed to Verify Phone Number: ${e}");
-    }
-  }*/
-  /*Future<void> signIn(String otp) async {
-
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId, smsCode: otp);
-
-    // Sign the user in (or link) with the credential
-    await _auth.signInWithCredential(credential);
-
-  }*/
   void _verifyPhoneNumber() async {
     PhoneVerificationCompleted verificationCompleted =
         (PhoneAuthCredential phoneAuthCredential) async {
-      await _auth.signInWithCredential(phoneAuthCredential);
+      final User user =
+          (await _auth.signInWithCredential(phoneAuthCredential)).user;
+      // users
+      //     .doc(user.phoneNumber)
+      //     .get()
+      //     .then((DocumentSnapshot documentSnapshot) {
+      //   if (documentSnapshot.exists) {
+      //     var name = documentSnapshot.data()['user_name'];
+      //     print('name ; $name');
+      //   } else {}
+      // });
       Navigator.of(context)
           .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
     };
@@ -214,35 +159,28 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
         smsCode: smsCode,
       );
       final User user = (await _auth.signInWithCredential(credential)).user;
+      users
+          .doc(user.phoneNumber)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          var name = documentSnapshot.data()['user_name'];
+          print('name ; $name');
+        } else {
+          addUser(user.phoneNumber).then((value) {
+            print('phone ');
+          })
+              .catchError((error) => print("Failed to add user: $error"));
+        }
+      });
       Navigator.of(context)
           .pushNamedAndRemoveUntil(Constant.HOME_PAGE, (route) => false);
-
     } catch (e) {
       print(e);
       _showDialog("Failed to sign in", context);
-
     }
   }
 }
-
-// void _showSnackBar(String pin, BuildContext context) {
-//   final snackBar = SnackBar(
-//     duration: const Duration(seconds: 3),
-//     content: Container(
-//       height: 80.0,
-//       child: Center(
-//         child: Text(
-//           'Pin Submitted. Value: $pin',
-//           style: const TextStyle(fontSize: 25.0),
-//         ),
-//       ),
-//     ),
-//     backgroundColor: Colors.`deepPurpleAccent`,
-//   );
-//   Scaffold.of(context)
-//     ..hideCurrentSnackBar()
-//     ..showSnackBar(snackBar);
-// }
 
 _showDialog(String message, BuildContext context) {
   // set up the button

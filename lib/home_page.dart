@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_firebase_phone_auth/component/home_product_list.dart';
-import 'package:flutter_firebase_phone_auth/model/product.dart';
 import 'package:flutter_firebase_phone_auth/order_page.dart';
 import 'package:flutter_firebase_phone_auth/profile_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,16 +19,17 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
   }
+
   static List<Widget> _widgetOptions = <Widget>[
     ProductList(),
     OrderPage(),
     ProfilePage(),
   ];
+
   @override
   Widget build(BuildContext context) {
     var query = FirebaseFirestore.instance.collection('product');
     query.get();
-
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

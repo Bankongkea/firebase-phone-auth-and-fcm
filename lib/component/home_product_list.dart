@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_phone_auth/model/product.dart';
 import 'package:flutter_firebase_phone_auth/common/route_generator.dart';
+import 'package:flutter_firebase_phone_auth/model/product.dart';
 
 class ProductList extends StatelessWidget {
   @override
@@ -11,31 +11,32 @@ class ProductList extends StatelessWidget {
       appBar: AppBar(
         title: Text('ផ្ទះចំការ'),
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('product').snapshots(),
+      body: FutureBuilder(
+        future: FirebaseFirestore.instance.collection('product').get(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Text('Something went wrong');
+            return Center(child: Text('Something went wrong'));
           }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
+          if (snapshot.hasData && snapshot.data.docs.length == 0) {
+            return Text("Document does not exist");
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return GridView.count(
+              padding: const EdgeInsets.all(8.0),
+              crossAxisCount: 2,
+              childAspectRatio: 1 / 1.5,
+              // gridDelegate:
+              //     SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              children: snapshot.data.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data = document.data();
+                Product product = Product.fromJson(data);
+                product.id = document.id;
+                return getStructuredGridCell(product, context);
+              }).toList(),
             );
           }
-
-          return GridView.count(
-            padding: const EdgeInsets.all(8.0),
-            crossAxisCount: 2,
-            childAspectRatio: 1 / 1.5,
-            // gridDelegate:
-            //     SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            children: snapshot.data.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data();
-              Product product = Product.fromJson(data);
-              product.id = document.id;
-              return getStructuredGridCell(product, context);
-            }).toList(),
+          return Center(
+            child: CircularProgressIndicator(),
           );
         },
       ),
@@ -60,7 +61,7 @@ Widget getStructuredGridCell(Product product, BuildContext context) {
                 image: CachedNetworkImageProvider(product.image),
                 fit: BoxFit.cover,
               ),
-             /* Image.network(product.image,
+              /* Image.network(product.image,
                   height: 180, width: double.infinity, fit: BoxFit.cover),*/
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
